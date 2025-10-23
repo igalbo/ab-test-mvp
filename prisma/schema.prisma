@@ -10,11 +10,58 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
+// Experiment represents an A/B test configuration
+model Experiment {
+    id        String   @id @default(cuid())
+    name      String   @unique // snake_case, lowercase only
+    status    String   // draft | active | paused | completed
+    strategy  String   @default("uniform") // e.g., "uniform"
+    startAt   DateTime?
+    endAt     DateTime?
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
+    variants    Variant[]
+    assignments Assignment[]
+
     @@index([name])
+    @@index([status])
+}
+
+// Variant represents a version in an experiment
+model Variant {
+    id           String @id @default(cuid())
+    experimentId String
+    key          String // e.g., "A", "B", "control"
+    weight       Int    @default(50) // 0-100
+
+    experiment Experiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
+
+    @@unique([experimentId, key])
+    @@index([experimentId])
+}
+
+// User represents a user who can be assigned to experiments
+model User {
+    id        String   @id @default(cuid())
+    name      String?
+    createdAt DateTime @default(now())
+
+    assignments Assignment[]
+}
+
+// Assignment represents a user's assignment to a specific variant
+model Assignment {
+    id           String   @id @default(cuid())
+    experimentId String
+    userId       String
+    variantKey   String
+    createdAt    DateTime @default(now())
+
+    experiment Experiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
+    user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([experimentId, userId]) // Sticky assignment - one user, one variant per experiment
+    @@index([userId])
+    @@index([experimentId])
 }
