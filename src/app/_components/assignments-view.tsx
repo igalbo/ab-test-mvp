@@ -26,6 +26,9 @@ export default function AssignmentsView() {
     },
     {
       enabled: false, // Don't auto-run
+      gcTime: 0, // Don't cache results
+      staleTime: 0, // Always refetch
+      retry: false, // Don't retry failed queries
     },
   );
 
@@ -39,11 +42,16 @@ export default function AssignmentsView() {
       return;
     }
 
+    // Clear previous result
+    setAssignmentResult(null);
+
     // Trigger the query
     assignMutation.refetch().then((result) => {
       if (result.data) {
         setAssignmentResult(result.data);
         toast.success("Assignment retrieved successfully!");
+      } else if (result.error) {
+        toast.error(result.error.message);
       }
     });
   };
@@ -52,7 +60,7 @@ export default function AssignmentsView() {
     <div className="space-y-6">
       <div className="rounded-lg border p-6">
         <h3 className="mb-4 text-lg font-semibold">Get User Assignment</h3>
-        <div className="grid gap-4">
+        <div className="grid gap-4 md:grid-cols-3">
           <div className="grid gap-2">
             <Label htmlFor="userId">User ID *</Label>
             <Input
@@ -80,16 +88,19 @@ export default function AssignmentsView() {
             </select>
           </div>
 
-          <Button
-            onClick={handleGetAssignment}
-            disabled={assignMutation.isFetching}
-            className="w-full"
-          >
-            <Search className="mr-2 h-4 w-4" />
-            {assignMutation.isFetching
-              ? "Getting Assignment..."
-              : "Get Assignment"}
-          </Button>
+          <div className="grid gap-2">
+            <Label className="invisible">Action</Label>
+            <Button
+              onClick={handleGetAssignment}
+              disabled={assignMutation.isFetching}
+              className="w-full"
+            >
+              <Search className="mr-2 h-4 w-4" />
+              {assignMutation.isFetching
+                ? "Getting Assignment..."
+                : "Get Assignment"}
+            </Button>
+          </div>
         </div>
       </div>
 

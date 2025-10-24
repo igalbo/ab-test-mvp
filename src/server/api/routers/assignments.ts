@@ -56,7 +56,9 @@ export const assignmentsRouter = createTRPCRouter({
       }
 
       if (experiment.variants.length === 0) {
-        throw new Error("Experiment has no variants");
+        throw new Error(
+          `Experiment "${experiment.name}" has no variants configured. Please add at least 2 variants before assigning users.`,
+        );
       }
 
       // Calculate hash-based assignment
@@ -130,7 +132,9 @@ export const assignmentsRouter = createTRPCRouter({
       }
 
       if (experiment.variants.length === 0) {
-        throw new Error("Experiment has no variants");
+        throw new Error(
+          `Cannot assign user to experiment "${experiment.name}". This experiment has no variants configured. Please add at least 2 variants before assigning users.`,
+        );
       }
 
       // Calculate hash-based assignment

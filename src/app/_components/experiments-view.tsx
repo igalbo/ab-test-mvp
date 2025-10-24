@@ -234,7 +234,7 @@ export default function ExperimentsView() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <Input
           placeholder="Search experiments..."
           value={searchTerm}
@@ -323,6 +323,9 @@ export default function ExperimentsView() {
                       setDateValidationError("");
                     }}
                     className={dateValidationError ? "border-red-500" : ""}
+                    style={{
+                      colorScheme: "dark",
+                    }}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -336,6 +339,9 @@ export default function ExperimentsView() {
                       setDateValidationError("");
                     }}
                     className={dateValidationError ? "border-red-500" : ""}
+                    style={{
+                      colorScheme: "dark",
+                    }}
                   />
                 </div>
               </div>

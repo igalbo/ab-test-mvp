@@ -60,6 +60,29 @@ export const variantsRouter = createTRPCRouter({
 
       // Delete existing variants and create new ones in a transaction
       await ctx.db.$transaction(async (tx) => {
+        // Get current variant keys before deletion
+        const currentVariants = await tx.variant.findMany({
+          where: { experimentId },
+          select: { key: true },
+        });
+
+        // Determine which variant keys are being removed
+        const currentKeys = new Set(currentVariants.map((v) => v.key));
+        const newKeys = new Set(variants.map((v) => v.key));
+        const removedKeys = Array.from(currentKeys).filter(
+          (k) => !newKeys.has(k),
+        );
+
+        // Delete assignments for removed variants
+        if (removedKeys.length > 0) {
+          await tx.assignment.deleteMany({
+            where: {
+              experimentId,
+              variantKey: { in: removedKeys },
+            },
+          });
+        }
+
         // Delete all existing variants for this experiment
         await tx.variant.deleteMany({
           where: { experimentId },
@@ -110,8 +133,22 @@ export const variantsRouter = createTRPCRouter({
         );
       }
 
-      return ctx.db.variant.delete({
-        where: { id: input.id },
+      // Delete assignments for this variant and then delete the variant
+      await ctx.db.$transaction(async (tx) => {
+        // Delete all assignments that reference this variant key
+        await tx.assignment.deleteMany({
+          where: {
+            experimentId: variant.experimentId,
+            variantKey: variant.key,
+          },
+        });
+
+        // Delete the variant
+        await tx.variant.delete({
+          where: { id: input.id },
+        });
       });
+
+      return variant;
     }),
 });

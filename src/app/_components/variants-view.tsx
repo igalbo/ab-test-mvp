@@ -14,6 +14,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { Slider } from "~/components/ui/slider";
 import { Plus, Trash2, Save } from "lucide-react";
 
 type Variant = {
@@ -196,20 +197,32 @@ export default function VariantsView() {
                               updateVariant(index, "key", e.target.value)
                             }
                             placeholder="A"
-                            className="w-32"
+                            className="w-32 md:w-48 lg:w-64"
                           />
                         </TableCell>
                         <TableCell>
-                          <Input
-                            type="number"
-                            min="0"
-                            max="100"
-                            value={variant.weight}
-                            onChange={(e) =>
-                              updateVariant(index, "weight", e.target.value)
-                            }
-                            className="w-32"
-                          />
+                          <div className="flex items-center gap-3">
+                            <Slider
+                              value={[variant.weight]}
+                              onValueChange={(value) =>
+                                updateVariant(index, "weight", value[0]!)
+                              }
+                              min={0}
+                              max={100}
+                              step={1}
+                              className="hidden md:flex md:flex-1"
+                            />
+                            <Input
+                              type="number"
+                              min="0"
+                              max="100"
+                              value={variant.weight}
+                              onChange={(e) =>
+                                updateVariant(index, "weight", e.target.value)
+                              }
+                              className="w-full text-center md:w-16"
+                            />
+                          </div>
                         </TableCell>
                         <TableCell className="text-right">
                           <Button
