@@ -33,7 +33,7 @@ A minimal but functional A/B testing platform built with the T3 Stack, featuring
 1. Clone the repository:
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/igalbo/ab-test-mvp.git
 cd ab-test-mvp
 ```
 
