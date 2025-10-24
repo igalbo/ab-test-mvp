@@ -46,7 +46,7 @@ export default function AssignmentsView() {
     setAssignmentResult(null);
 
     // Trigger the query
-    assignMutation.refetch().then((result) => {
+    void assignMutation.refetch().then((result) => {
       if (result.data) {
         setAssignmentResult(result.data);
         toast.success("Assignment retrieved successfully!");

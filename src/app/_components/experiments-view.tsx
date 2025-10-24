@@ -28,6 +28,19 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 
 type ExperimentStatus = "draft" | "active" | "paused" | "completed";
 
+type Experiment = {
+  id: string;
+  name: string;
+  status: string;
+  strategy: string;
+  startAt: Date | null;
+  endAt: Date | null;
+  _count: {
+    variants: number;
+    assignments: number;
+  };
+};
+
 export default function ExperimentsView() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -49,7 +62,7 @@ export default function ExperimentsView() {
 
   const createMutation = api.experiments.create.useMutation({
     onSuccess: () => {
-      utils.experiments.list.invalidate();
+      void utils.experiments.list.invalidate();
       setIsCreateOpen(false);
       resetForm();
       toast.success("Experiment created successfully!");
@@ -61,7 +74,7 @@ export default function ExperimentsView() {
 
   const updateMutation = api.experiments.update.useMutation({
     onSuccess: () => {
-      utils.experiments.list.invalidate();
+      void utils.experiments.list.invalidate();
       setIsCreateOpen(false);
       setEditingId(null);
       resetForm();
@@ -74,7 +87,7 @@ export default function ExperimentsView() {
 
   const deleteMutation = api.experiments.delete.useMutation({
     onSuccess: () => {
-      utils.experiments.list.invalidate();
+      void utils.experiments.list.invalidate();
       toast.success("Experiment deleted successfully!");
     },
     onError: (error) => {
@@ -175,11 +188,11 @@ export default function ExperimentsView() {
     }
   };
 
-  const handleEdit = (experiment: any) => {
+  const handleEdit = (experiment: Experiment) => {
     setEditingId(experiment.id);
     setFormData({
       name: experiment.name,
-      status: experiment.status,
+      status: experiment.status as ExperimentStatus,
       strategy: experiment.strategy,
       startAt: toLocalDatetimeString(experiment.startAt),
       endAt: toLocalDatetimeString(experiment.endAt),

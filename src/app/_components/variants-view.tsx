@@ -36,7 +36,7 @@ export default function VariantsView() {
   const utils = api.useUtils();
   const upsertMutation = api.variants.upsertMany.useMutation({
     onSuccess: () => {
-      utils.variants.list.invalidate();
+      void utils.variants.list.invalidate();
       toast.success("Variants saved successfully!");
     },
     onError: (error) => {
@@ -244,10 +244,12 @@ export default function VariantsView() {
 
           <div className="text-muted-foreground text-sm">
             <p>
-              • Variant keys should be unique (e.g., "A", "B", "control",
-              "treatment")
+              • Variant keys should be unique (e.g., &quot;A&quot;,
+              &quot;B&quot;, &quot;control&quot;, &quot;treatment&quot;)
             </p>
-            <p>• Weights range from 0-100 (they don't need to sum to 100)</p>
+            <p>
+              • Weights range from 0-100 (they don&apos;t need to sum to 100)
+            </p>
             <p>• At least 2 variants are required per experiment</p>
           </div>
         </>
