@@ -15,6 +15,7 @@ export default function AssignmentsView() {
     useState<AssignmentResult | null>(null);
 
   const { data: experiments } = api.experiments.list.useQuery();
+  const { data: users } = api.users.list.useQuery();
 
   const assignMutation = api.assignments.get.useQuery(
     {
@@ -61,6 +62,7 @@ export default function AssignmentsView() {
         selectedExperimentId={selectedExperimentId}
         onExperimentChange={setSelectedExperimentId}
         experiments={experiments}
+        users={users}
         onSubmit={handleGetAssignment}
         isLoading={assignMutation.isFetching}
       />

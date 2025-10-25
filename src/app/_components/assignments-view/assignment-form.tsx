@@ -4,12 +4,18 @@ import { Label } from "~/components/ui/label";
 import { Search } from "lucide-react";
 import type { Experiment } from "./types";
 
+type User = {
+  id: string;
+  name: string | null;
+};
+
 type AssignmentFormProps = {
   userId: string;
   onUserIdChange: (userId: string) => void;
   selectedExperimentId: string;
   onExperimentChange: (experimentId: string) => void;
   experiments: Experiment[] | undefined;
+  users: User[] | undefined;
   onSubmit: () => void;
   isLoading: boolean;
 };
@@ -20,6 +26,7 @@ export function AssignmentForm({
   selectedExperimentId,
   onExperimentChange,
   experiments,
+  users,
   onSubmit,
   isLoading,
 }: AssignmentFormProps) {
@@ -29,12 +36,20 @@ export function AssignmentForm({
       <div className="grid gap-4 md:grid-cols-3">
         <div className="grid gap-2">
           <Label htmlFor="userId">User ID *</Label>
-          <Input
+          <select
             id="userId"
             value={userId}
             onChange={(e) => onUserIdChange(e.target.value)}
-            placeholder="user_123"
-          />
+            className="border-input bg-background flex h-10 w-full rounded-md border px-3 py-2"
+          >
+            <option value="">-- Select a user --</option>
+            {users?.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.id}
+                {user.name ? ` (${user.name})` : ""}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="grid gap-2">
